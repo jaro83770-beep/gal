@@ -3,429 +3,292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galih's Task Board</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>UGLY NOTES 💀</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&family=Impact&display=swap" rel="stylesheet">
     <style>
+        /* --- STYLE ANTI-DESIGN --- */
         :root {
-            /* Palet Warna Dark Tech / Galih Style */
-            --bg-body: #0f172a;       /* Deep Slate Blue */
-            --card-bg: #1e293b;       /* Lighter Slate */
-            --card-hover: #334155;
-            --text-main: #f8fafc;     /* Off-white */
-            --text-muted: #94a3b8;    /* Grey */
-            --accent: #38bdf8;        /* Cyan / Electric Blue */
-            --accent-hover: #0ea5e9;
-            --danger: #ef4444;
-            
-            --border: 1px solid #334155;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-            --radius: 8px; /* Sudut lebih tajam */
+            --neon-yellow: #FFFF00;
+            --neon-pink: #FF00FF;
+            --neon-blue: #0000FF;
+            --acid-green: #00FF00;
+            --ugly-bg: #111;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            /* Tech Grid Background Pattern */
-            background-image: linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(56, 189, 248, 0.05) 1px, transparent 1px);
-            background-size: 30px 30px;
+            background-color: var(--ugly-bg);
+            font-family: 'Comic Neue', cursive;
+            color: var(--neon-yellow);
+            overflow-x: hidden;
+            background-image: repeating-linear-gradient(
+                45deg,
+                #111,
+                #111 10px,
+                #222 10px,
+                #222 20px
+            );
         }
 
-        /* --- HEADER --- */
-        header {
-            background: rgba(15, 23, 42, 0.9);
-            border-bottom: var(--border);
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        .brand {
-            font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            color: var(--accent);
-            text-transform: uppercase;
-        }
-
-        .btn-add {
-            background: var(--accent);
-            color: #000;
-            border: none;
-            padding: 10px 24px;
-            border-radius: var(--radius);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-add:hover {
-            background: var(--accent-hover);
-            transform: translateY(-1px);
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
-        }
-
-        /* --- MAIN CONTENT --- */
-        main {
-            flex: 1;
-            padding: 40px;
-            max-width: 900px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 100px 0;
-            color: var(--text-muted);
-            border: 1px dashed #334155;
-            border-radius: var(--radius);
-        }
-
-        /* --- LIST ITEM (Bukan Grid Card) --- */
-        .task-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .task-item {
-            background: var(--card-bg);
+        /* Header yang Nge-Blast */
+        .ugly-header {
+            background: var(--neon-pink);
+            color: var(--ugly-bg);
             padding: 20px;
-            border: var(--border);
-            border-radius: var(--radius);
-            display: flex;
-            align-items: flex-start;
-            gap: 20px;
-            transition: all 0.2s;
-            position: relative;
+            text-align: center;
+            border-bottom: 10px solid var(--neon-blue);
+            transform: rotate(-1deg);
+            box-shadow: 10px 10px 0px var(--acid-green);
         }
 
-        .task-item:hover {
-            background: var(--card-hover);
-            border-color: var(--accent);
-            transform: translateX(5px);
-        }
-
-        /* Checkbox Custom Tech */
-        .checkbox-container {
-            position: relative;
-            top: 4px;
-            cursor: pointer;
-        }
-        
-        .checkbox-custom {
-            width: 24px;
-            height: 24px;
-            border: 2px solid var(--text-muted);
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .task-item.completed .checkbox-custom {
-            background: var(--accent);
-            border-color: var(--accent);
-        }
-
-        .checkbox-custom svg {
-            width: 16px; height: 16px; fill: #000; display: none;
-        }
-        .task-item.completed .checkbox-custom svg { display: block; }
-
-        .task-content {
-            flex: 1;
-        }
-
-        .task-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 6px;
-        }
-
-        .task-item.completed .task-title {
-            text-decoration: line-through;
-            color: var(--text-muted);
-        }
-
-        .task-desc {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-
-        .task-meta {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 12px;
+        .ugly-header h1 {
+            font-family: 'Impact', sans-serif;
+            font-size: 3rem;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
+            text-shadow: 3px 3px 0px #fff;
         }
 
-        .btn-delete {
-            background: transparent;
-            border: 1px solid #334155;
-            color: var(--text-muted);
-            width: 32px;
-            height: 32px;
-            border-radius: 4px;
+        /* Container Tumpuk (Bukan Grid) */
+        .ugly-container {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Tombol Ugal-Ugalan */
+        .btn-ugly {
+            background: var(--neon-blue);
+            color: #fff;
+            border: 5px dashed #fff;
+            padding: 15px 30px;
+            font-family: 'Impact', sans-serif;
+            font-size: 1.5rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            transform: skew(-10deg);
+            transition: 0.1s;
+            outline: none;
+        }
+
+        .btn-ugly:hover {
+            background: var(--acid-green);
+            transform: skew(-10deg) scale(1.1) rotate(2deg);
+            box-shadow: 5px 5px 0px var(--neon-pink);
+        }
+
+        /* Kartu Catatan Kacau */
+        .note-card {
+            background: var(--neon-yellow);
+            color: #000;
+            border: 3px solid #fff;
+            padding: 20px;
+            position: relative;
+            box-shadow: -10px 10px 0px var(--neon-pink);
+            transition: 0.2s;
+        }
+
+        .note-card:hover {
+            transform: rotate(2deg) translate(5px, -5px);
+        }
+
+        .note-card:nth-child(even) {
+            background: var(--acid-green);
+            transform: rotate(-2deg);
+            box-shadow: 10px -10px 0px var(--neon-blue);
+        }
+
+        .note-title {
+            font-family: 'Impact', sans-serif;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            border-bottom: 2px dotted #000;
+            margin-bottom: 10px;
+            word-break: break-all;
+        }
+
+        .note-desc {
+            font-size: 1.2rem;
+            font-weight: bold;
+            line-height: 1.4;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: red;
+            color: yellow;
+            border: 3px solid black;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
+            box-shadow: 3px 3px 0px black;
         }
 
-        .btn-delete:hover {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-            border-color: var(--danger);
+        /* Modal Glitch */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
         }
-
-        /* --- MODAL --- */
-        .modal-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(5px);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 50; opacity: 0; pointer-events: none; transition: opacity 0.2s;
-        }
-
-        .modal-bg.open { opacity: 1; pointer-events: all; }
 
         .modal-box {
-            background: var(--card-bg);
-            width: 100%; max-width: 500px;
+            background: #fff;
+            border: 10px solid var(--neon-pink);
             padding: 30px;
-            border: var(--border);
-            border-radius: var(--radius);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-            transform: scale(0.95);
-            transition: transform 0.2s;
+            width: 90%;
+            max-width: 400px;
+            animation: shake 0.5s infinite;
         }
 
-        .modal-bg.open .modal-box { transform: scale(1); }
-
-        .modal-title {
-            font-size: 1.25rem;
-            font-weight: 800;
-            margin-bottom: 25px;
-            color: var(--accent);
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
         }
 
-        .form-group { margin-bottom: 20px; }
-        .form-label { display: block; margin-bottom: 8px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
-        
-        .form-input {
+        .ugly-input {
             width: 100%;
-            background: #0f172a;
-            border: 1px solid #334155;
-            color: var(--text-main);
-            padding: 12px 16px;
-            border-radius: var(--radius);
-            font-family: 'Inter', sans-serif;
-            outline: none;
-            transition: border-color 0.2s;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            font-family: 'Comic Neue', cursive;
+            border: 4px solid var(--neon-blue);
+            background: #eee;
         }
-
-        .form-input:focus { border-color: var(--accent); }
-
-        .modal-actions {
-            display: flex; justify-content: flex-end; gap: 12px;
-        }
-
-        .btn-cancel {
-            background: transparent; border: 1px solid #334155; color: var(--text-muted);
-            padding: 10px 20px; border-radius: var(--radius); cursor: pointer; font-weight: 600;
-        }
-        .btn-cancel:hover { background: rgba(255,255,255,0.05); color: white; }
 
         .btn-save {
-            background: var(--accent); border: none; color: #000;
-            padding: 10px 20px; border-radius: var(--radius); cursor: pointer; font-weight: 800;
+            background: var(--acid-green);
+            width: 100%;
+            padding: 15px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-family: 'Impact', sans-serif;
+            font-size: 1.2rem;
+            color: black;
         }
-        .btn-save:hover { background: var(--accent-hover); }
+        
+        /* Marquee Berjalan */
+        .marquee {
+            background: var(--neon-pink);
+            color: #fff;
+            padding: 5px;
+            font-family: monospace;
+            font-size: 1.2rem;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .marquee p { display: inline-block; animation: scroll 10s linear infinite; }
+        @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 
-        /* Mobile */
-        @media (max-width: 600px) {
-            body { padding-bottom: 80px; }
-            header { padding: 15px 20px; }
-            main { padding: 20px; }
-            .task-item { align-items: flex-start; }
-        }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="brand">GALIH.IO <span style="font-size: 0.5em; color: var(--text-muted); vertical-align: middle;">/// TASKS</span></div>
-        <button class="btn-add" onclick="openModal()">
-            <span>+</span> New Task
-        </button>
-    </header>
+    <div class="ugly-header">
+        <h1>CATATAN ACAK 💩</h1>
+        <p>GAK ADA STYLE, CUMA DATA!</p>
+    </div>
 
-    <main>
-        <div id="taskContainer" class="task-list">
-            <!-- Task List via JS -->
+    <div class="marquee">
+        <p>SELAMAT DATANG DI WEBSITE PALING JESED SEDUNIAA... KLIK TOMBOL BESAR DI BAWAH UNTUK TAMBAH DATA... WASPADA MATA LELAH...</p>
+    </div>
+
+    <div class="ugly-container">
+        <button class="btn-ugly" onclick="openModal()">[ + ] TAMBAH CATATAN</button>
+        
+        <div id="uglyGrid">
+            <!-- Items go here -->
         </div>
-    </main>
+    </div>
 
-    <!-- Modal Form -->
-    <div class="modal-bg" id="modalOverlay">
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalUgly">
         <div class="modal-box">
-            <h3 class="modal-title">INPUT NEW TASK</h3>
+            <h2 style="font-family: Impact; font-size: 2rem; margin-bottom: 20px; color: var(--neon-blue);">INPUT DATA!</h2>
             
-            <div class="form-group">
-                <label class="form-label">TASK TITLE</label>
-                <input type="text" id="inputTitle" class="form-input" placeholder="Enter task name...">
-            </div>
+            <label>JUDUL:</label>
+            <input type="text" id="uglyTitle" class="ugly-input" placeholder="TEKS APA AJA...">
 
-            <div class="form-group">
-                <label class="form-label">DESCRIPTION (OPTIONAL)</label>
-                <input type="text" id="inputDesc" class="form-input" placeholder="Add details...">
-            </div>
+            <label>ISI:</label>
+            <textarea id="uglyDesc" class="ugly-input" rows="3" placeholder="TULIS SESUKA HATI..."></textarea>
 
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeModal()">CANCEL</button>
-                <button class="btn-save" onclick="saveTask()">SAVE TASK</button>
-            </div>
+            <button class="btn-save" onclick="saveUgly()">SIMPAN SEKARANG!!!</button>
+            <button style="margin-top:10px; width:100%; padding:10px; background:red; color:white; border:none; font-family:Impact; cursor:pointer;" onclick="closeModal()">BATAL</button>
         </div>
     </div>
 
     <script>
-        // --- STATE MANAGEMENT ---
-        // Key khusus untuk Galih agar tidak bentrok
-        let tasks = JSON.parse(localStorage.getItem('galihTasks')) || [];
+        let uglyData = JSON.parse(localStorage.getItem('uglyData')) || [];
 
-        // --- RENDER FUNCTION ---
-        function render() {
-            const container = document.getElementById('taskContainer');
-            container.innerHTML = '';
-
-            if (tasks.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <h3>NO TASKS FOUND</h3>
-                        <p>System initialized. Awaiting input.</p>
-                    </div>
+        function renderUgly() {
+            const box = document.getElementById('uglyGrid');
+            box.innerHTML = '';
+            
+            uglyData.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'note-card';
+                div.innerHTML = `
+                    <div class="delete-btn" onclick="delUgly(${item.id})">X</div>
+                    <div class="note-title">${item.title}</div>
+                    <div class="note-desc">${item.desc}</div>
                 `;
-                return;
-            }
-
-            // Sort: Incomplete dulu, lalu yang completed
-            tasks.sort((a, b) => a.done - b.done);
-
-            tasks.forEach(task => {
-                const el = document.createElement('div');
-                el.className = `task-item ${task.done ? 'completed' : ''}`;
-                
-                // Format Tanggal
-                const dateStr = new Date(task.id).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }).toUpperCase();
-                
-                // Hapus tanda slash di tanggal biar lebih 'tech'
-                const techDate = dateStr.replace(/\//g, '.');
-
-                el.innerHTML = `
-                    <div class="checkbox-container" onclick="toggleDone(${task.id})">
-                        <div class="checkbox-custom">
-                            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        </div>
-                    </div>
-                    
-                    <div class="task-content">
-                        <div class="task-title">${task.title}</div>
-                        ${task.desc ? `<div class="task-desc">${task.desc}</div>` : ''}
-                        <div class="task-meta">ID: ${task.id.toString().slice(-4)} // DATE: ${techDate}</div>
-                    </div>
-
-                    <button class="btn-delete" onclick="deleteTask(${task.id})">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                    </button>
-                `;
-                container.appendChild(el);
+                box.appendChild(div);
             });
         }
 
-        // --- LOGIC ---
-        function openModal() {
-            document.getElementById('modalOverlay').classList.add('open');
-            document.getElementById('inputTitle').focus();
-        }
+        function openModal() { document.getElementById('modalUgly').style.display = 'flex'; }
+        function closeModal() { document.getElementById('modalUgly').style.display = 'none'; }
 
-        function closeModal() {
-            document.getElementById('modalOverlay').classList.remove('open');
-            document.getElementById('inputTitle').value = '';
-            document.getElementById('inputDesc').value = '';
-        }
+        function saveUgly() {
+            const t = document.getElementById('uglyTitle').value;
+            const d = document.getElementById('uglyDesc').value;
+            
+            if(!t) return;
 
-        function saveTask() {
-            const title = document.getElementById('inputTitle').value.trim();
-            const desc = document.getElementById('inputDesc').value.trim();
-
-            if (!title) {
-                alert("ERROR: Title is required.");
-                return;
-            }
-
-            const newTask = {
-                id: Date.now(),
-                title: title,
-                desc: desc,
-                done: false
-            };
-
-            tasks.unshift(newTask); // Add to top
-            localStorage.setItem('galihTasks', JSON.stringify(tasks));
-            render();
+            uglyData.push({ id: Date.now(), title: t, desc: d });
+            localStorage.setItem('uglyData', JSON.stringify(uglyData));
+            renderUgly();
             closeModal();
+            
+            document.getElementById('uglyTitle').value = '';
+            document.getElementById('uglyDesc').value = '';
         }
 
-        function toggleDone(id) {
-            const task = tasks.find(t => t.id === id);
-            if (task) {
-                task.done = !task.done;
-                localStorage.setItem('galihTasks', JSON.stringify(tasks));
-                render();
-            }
+        function delUgly(id) {
+            uglyData = uglyData.filter(x => x.id !== id);
+            localStorage.setItem('uglyData', JSON.stringify(uglyData));
+            renderUgly();
         }
 
-        function deleteTask(id) {
-            if (confirm("CONFIRM DELETION?")) {
-                tasks = tasks.filter(t => t.id !== id);
-                localStorage.setItem('galihTasks', JSON.stringify(tasks));
-                render();
-            }
-        }
-
-        // Close modal on outside click
-        document.getElementById('modalOverlay').addEventListener('click', (e) => {
-            if (e.target.id === 'modalOverlay') closeModal();
-        });
-
-        // Initial Render
-        render();
-
+        renderUgly();
     </script>
 </body>
 </html>
