@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galih's Task Board</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Palet Warna Dark Tech / Galih Style */
+            --bg-body: #0f172a;       /* Deep Slate Blue */
+            --card-bg: #1e293b;       /* Lighter Slate */
+            --card-hover: #334155;
+            --text-main: #f8fafc;     /* Off-white */
+            --text-muted: #94a3b8;    /* Grey */
+            --accent: #38bdf8;        /* Cyan / Electric Blue */
+            --accent-hover: #0ea5e9;
+            --danger: #ef4444;
+            
+            --border: 1px solid #334155;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            --radius: 8px; /* Sudut lebih tajam */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            /* Tech Grid Background Pattern */
+            background-image: linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(56, 189, 248, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: rgba(15, 23, 42, 0.9);
+            border-bottom: var(--border);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        .btn-add {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 10px 24px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-add:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+        }
+
+        /* --- MAIN CONTENT --- */
+        main {
+            flex: 1;
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 100px 0;
+            color: var(--text-muted);
+            border: 1px dashed #334155;
+            border-radius: var(--radius);
+        }
+
+        /* --- LIST ITEM (Bukan Grid Card) --- */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .task-item {
+            background: var(--card-bg);
+            padding: 20px;
+            border: var(--border);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .task-item:hover {
+            background: var(--card-hover);
+            border-color: var(--accent);
+            transform: translateX(5px);
+        }
+
+        /* Checkbox Custom Tech */
+        .checkbox-container {
+            position: relative;
+            top: 4px;
+            cursor: pointer;
+        }
+        
+        .checkbox-custom {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--text-muted);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .task-item.completed .checkbox-custom {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .checkbox-custom svg {
+            width: 16px; height: 16px; fill: #000; display: none;
+        }
+        .task-item.completed .checkbox-custom svg { display: block; }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .task-item.completed .task-title {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        .task-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .task-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .btn-delete {
+            background: transparent;
+            border: 1px solid #334155;
+            color: var(--text-muted);
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border-color: var(--danger);
+        }
+
+        /* --- MODAL --- */
+        .modal-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 50; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+        }
+
+        .modal-bg.open { opacity: 1; pointer-events: all; }
+
+        .modal-box {
+            background: var(--card-bg);
+            width: 100%; max-width: 500px;
+            padding: 30px;
+            border: var(--border);
+            border-radius: var(--radius);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            transform: scale(0.95);
+            transition: transform 0.2s;
+        }
+
+        .modal-bg.open .modal-box { transform: scale(1); }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 25px;
+            color: var(--accent);
+        }
+
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; margin-bottom: 8px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+        
+        .form-input {
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: var(--text-main);
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus { border-color: var(--accent); }
+
+        .modal-actions {
+            display: flex; justify-content: flex-end; gap: 12px;
+        }
+
+        .btn-cancel {
+            background: transparent; border: 1px solid #334155; color: var(--text-muted);
+            padding: 10px 20px; border-radius: var(--radius); cursor: pointer; font-weight: 600;
+        }
+        .btn-cancel:hover { background: rgba(255,255,255,0.05); color: white; }
+
+        .btn-save {
+            background: var(--accent); border: none; color: #000;
+            padding: 10px 20px; border-radius: var(--radius); cursor: pointer; font-weight: 800;
+        }
+        .btn-save:hover { background: var(--accent-hover); }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            body { padding-bottom: 80px; }
+            header { padding: 15px 20px; }
+            main { padding: 20px; }
+            .task-item { align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">GALIH.IO <span style="font-size: 0.5em; color: var(--text-muted); vertical-align: middle;">/// TASKS</span></div>
+        <button class="btn-add" onclick="openModal()">
+            <span>+</span> New Task
+        </button>
+    </header>
+
+    <main>
+        <div id="taskContainer" class="task-list">
+            <!-- Task List via JS -->
+        </div>
+    </main>
+
+    <!-- Modal Form -->
+    <div class="modal-bg" id="modalOverlay">
+        <div class="modal-box">
+            <h3 class="modal-title">INPUT NEW TASK</h3>
+            
+            <div class="form-group">
+                <label class="form-label">TASK TITLE</label>
+                <input type="text" id="inputTitle" class="form-input" placeholder="Enter task name...">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">DESCRIPTION (OPTIONAL)</label>
+                <input type="text" id="inputDesc" class="form-input" placeholder="Add details...">
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">CANCEL</button>
+                <button class="btn-save" onclick="saveTask()">SAVE TASK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- STATE MANAGEMENT ---
+        // Key khusus untuk Galih agar tidak bentrok
+        let tasks = JSON.parse(localStorage.getItem('galihTasks')) || [];
+
+        // --- RENDER FUNCTION ---
+        function render() {
+            const container = document.getElementById('taskContainer');
+            container.innerHTML = '';
+
+            if (tasks.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>NO TASKS FOUND</h3>
+                        <p>System initialized. Awaiting input.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort: Incomplete dulu, lalu yang completed
+            tasks.sort((a, b) => a.done - b.done);
+
+            tasks.forEach(task => {
+                const el = document.createElement('div');
+                el.className = `task-item ${task.done ? 'completed' : ''}`;
+                
+                // Format Tanggal
+                const dateStr = new Date(task.id).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }).toUpperCase();
+                
+                // Hapus tanda slash di tanggal biar lebih 'tech'
+                const techDate = dateStr.replace(/\//g, '.');
+
+                el.innerHTML = `
+                    <div class="checkbox-container" onclick="toggleDone(${task.id})">
+                        <div class="checkbox-custom">
+                            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </div>
+                    </div>
+                    
+                    <div class="task-content">
+                        <div class="task-title">${task.title}</div>
+                        ${task.desc ? `<div class="task-desc">${task.desc}</div>` : ''}
+                        <div class="task-meta">ID: ${task.id.toString().slice(-4)} // DATE: ${techDate}</div>
+                    </div>
+
+                    <button class="btn-delete" onclick="deleteTask(${task.id})">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                `;
+                container.appendChild(el);
+            });
+        }
+
+        // --- LOGIC ---
+        function openModal() {
+            document.getElementById('modalOverlay').classList.add('open');
+            document.getElementById('inputTitle').focus();
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('open');
+            document.getElementById('inputTitle').value = '';
+            document.getElementById('inputDesc').value = '';
+        }
+
+        function saveTask() {
+            const title = document.getElementById('inputTitle').value.trim();
+            const desc = document.getElementById('inputDesc').value.trim();
+
+            if (!title) {
+                alert("ERROR: Title is required.");
+                return;
+            }
+
+            const newTask = {
+                id: Date.now(),
+                title: title,
+                desc: desc,
+                done: false
+            };
+
+            tasks.unshift(newTask); // Add to top
+            localStorage.setItem('galihTasks', JSON.stringify(tasks));
+            render();
+            closeModal();
+        }
+
+        function toggleDone(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.done = !task.done;
+                localStorage.setItem('galihTasks', JSON.stringify(tasks));
+                render();
+            }
+        }
+
+        function deleteTask(id) {
+            if (confirm("CONFIRM DELETION?")) {
+                tasks = tasks.filter(t => t.id !== id);
+                localStorage.setItem('galihTasks', JSON.stringify(tasks));
+                render();
+            }
+        }
+
+        // Close modal on outside click
+        document.getElementById('modalOverlay').addEventListener('click', (e) => {
+            if (e.target.id === 'modalOverlay') closeModal();
+        });
+
+        // Initial Render
+        render();
+
+    </script>
+</body>
+</html>
